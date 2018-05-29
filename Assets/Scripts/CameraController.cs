@@ -16,9 +16,10 @@ public class CameraController : MonoBehaviour {
     [SerializeField] float zoomSpeed = 1;
     [SerializeField] float rotateSpeed = 1;
 
-    private float xPos = 0;
-    private float yPos = 0;
-    private float zPos = 0;
+    [Header("Camera")]
+    [SerializeField] GameObject Camera;
+    [SerializeField] float cameraOffset = 20;
+
 
     // Use this for initialization
     void Start () {
@@ -35,10 +36,8 @@ public class CameraController : MonoBehaviour {
         PanCamera();
         ZoomCamera();
         RotateCamera();
-        transform.localPosition = new Vector3(xPos, yPos, zPos);
     }
 
-    // does not pan based on camera position, its based on global for now, weird
     void PanCamera ()
     {
         float xAxisMove = Input.GetAxis("Horizontal");
@@ -47,23 +46,27 @@ public class CameraController : MonoBehaviour {
         float xOffset = xAxisMove * panSpeed * Time.deltaTime;
         float zOffset = zAxisMove * panSpeed * Time.deltaTime;
 
-        float xRawPos = transform.localPosition.x + xOffset;
-        float zRawPos = transform.localPosition.z + zOffset;
+        // perform the clamp calc to keep within boundary
+        if ((transform.position.x + xOffset) > xBounds || (transform.position.x + xOffset) < -xBounds)
+            xOffset = 0.0f;
+        if ((transform.position.z + zOffset) > zBounds || (transform.position.z + zOffset) < -zBounds)
+            zOffset = 0.0f;
 
-        xPos = Mathf.Clamp(xRawPos, -xBounds, xBounds);
-        zPos = Mathf.Clamp(zRawPos, -zBounds, zBounds);
+        transform.Translate(new Vector3(xOffset, 0.0f, zOffset));
     }
 
-    // has desired behavior
     void ZoomCamera ()
     {
+        float yPos = 0;
+        // based on "player" object position to rotate around point instead of rotate camera
         float yAxisMove = Input.GetAxis("Mouse ScrollWheel");
         float yOffset = yAxisMove * zoomSpeed * Time.deltaTime;
         float yRawPos = transform.localPosition.y + yOffset;
-        yPos = Mathf.Clamp(yRawPos, yBoundsMin, yBoundsMax);
+        yPos = Mathf.Clamp(yRawPos, yBoundsMin - cameraOffset, yBoundsMax - cameraOffset);
+
+        transform.localPosition = new Vector3(transform.localPosition.x, yPos, transform.localPosition.z);
     }
 
-    // need to edit so it rotates around a center axis
     private void RotateCamera()
     {
         float rAxisMove = Input.GetAxis("Rotation");
