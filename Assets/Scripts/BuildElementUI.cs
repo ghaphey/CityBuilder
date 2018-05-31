@@ -2,52 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class BuildElementUI : MonoBehaviour {
 
     [SerializeField] GameObject house;
-    [SerializeField] Camera mainCamera;
+    [SerializeField] GameObject stockPile;
 
-    private bool movingObject;
+    private Camera mainCamera;
     private Vector3 rayCastTarget;
-    private GameObject newObject;
-    private bool invalidPlace = false;
+
+    private void Start()
+    {
+        mainCamera = (GameObject.Find("Main Camera")).GetComponent<Camera>();
+    }
 
     private void Update()
     {
-        if (movingObject)
-            ObjectPlace();
     }
 
 
     public void HousePressed ()
     {
-        newObject = Instantiate(house, new Vector3(0.0f, 0.45f, 0.0f), Quaternion.identity);
-        movingObject = true;
-
-      
+        GameObject newHouse = Instantiate(house, new Vector3(0.0f, 0.4f, 0.0f), Quaternion.identity);
+        ExecuteEvents.Execute<ICustomMessageTarget>(newHouse, null, (x, y) => x.PlacingBuilding(mainCamera)); 
     }
-
-    
-
-    void ObjectPlace ()
+    public void StockpilePressed()
     {
-        RaycastHit hit;
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-
-        if (Physics.Raycast(ray, out hit))
-        {
-            newObject.transform.position = new Vector3(Mathf.Round(hit.point.x), newObject.transform.position.y, Mathf.Round(hit.point.z));
-
-        }
-
-        if (Input.GetMouseButtonDown(0) && !invalidPlace)
-            movingObject = false;
-        // MUST IMPLEMENT COLLISION DETECTION FOR BUILDING PLACEMENT
-        else if (Input.GetKeyDown("r"))
-        {
-            newObject.transform.Rotate(0.0f, 90.0f, 0.0f);
-        }
+        GameObject newStockpile = Instantiate(stockPile, new Vector3(0.0f, 0.001f, 0.0f), Quaternion.identity);
+        ExecuteEvents.Execute<ICustomMessageTarget>(newStockpile, null, (x, y) => x.PlacingBuilding(mainCamera));
     }
 
+    // TODO: fix bug w/ interface when selecting between stockpile and house, sometimes creates stockpile instead
+    // when house clicked
 }

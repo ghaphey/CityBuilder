@@ -17,17 +17,15 @@ public class CameraController : MonoBehaviour {
     [SerializeField] float rotateSpeed = 1;
 
     [Header("Camera")]
-    [SerializeField] GameObject Camera;
     [SerializeField] float cameraOffset = 20;
-
-
+    
     // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    void Start ()
+    {
+    }
+
+    // Update is called once per frame
+    void Update () {
         MakeMoves();
     }
 
