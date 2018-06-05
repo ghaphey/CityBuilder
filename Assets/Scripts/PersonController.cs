@@ -3,10 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class PersonController : MonoBehaviour {
+public class PersonController : MonoBehaviour
+{
+    private enum personState { Idle, Moving, Working };
+    private enum personTask { Unassigned, Worker, Builder};
+
+    personState currState = personState.Idle;
+    personTask task = personTask.Unassigned;
 
     private GameObject goal = null;
-
     private NavMeshAgent agent;
     // Use this for initialization
     void Start () {
@@ -16,10 +21,19 @@ public class PersonController : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        switch (task)
+        {
+            case personTask.Worker:
+                break;
+            case personTask.Builder:
+                break;
+            case personTask.Unassigned:
+                break;
+        }
         goal = FindClosestLocation("Gather");
         if (goal != null)
         {
-            print("moving");
+            currState = personState.Moving;
             agent.destination = goal.transform.position;
         }
     }

@@ -9,7 +9,8 @@ public class BuildElementUI : MonoBehaviour {
     [SerializeField] GameObject house;
     [SerializeField] GameObject stockPile;
     [SerializeField] GameObject selected;
-    [SerializeField] GameObject gatherToggle;
+    [SerializeField] Button gatherButton;
+    [SerializeField] Button stopGatherButton;
 
     private Camera mainCamera;
     private GameObject currentSelected = null;
@@ -22,7 +23,6 @@ public class BuildElementUI : MonoBehaviour {
     private void Update()
     {
         MouseHandler();
-        ContextMenuController();
     }
 
     private void MouseHandler()
@@ -42,29 +42,39 @@ public class BuildElementUI : MonoBehaviour {
                     GameObject newSelect = Instantiate(selected, hit.transform.position, Quaternion.Euler(-90.0f, 0.0f, 0.0f));
                     newSelect.transform.parent = hit.transform;
                     currentSelected = hit.collider.gameObject;
+                    ContextMenuController();
                 }
             }
         }
         if (Input.GetMouseButtonDown(1))
         {
             Destroy(currentSelected.transform.Find("Selected(Clone)").gameObject);
+            if (currentSelected.transform.parent.name == "Resources")
+                gatherButton.interactable = false;
             currentSelected = null;
         }
     }
 
     private void ContextMenuController()
     {
-        if (currentSelected != null)
+        if (currentSelected.transform.parent.name == "Resources")
         {
-            if (currentSelected.transform.parent.name == "Resources")
+            gatherButton.interactable = true;
+            if (currentSelected.tag == "Gather")
             {
-                // must fix toggle to have persistance for objects using "gather" tag
-                gatherToggle.SetActive(true);
+                gatherButton.interactable = false;
+                stopGatherButton.interactable = true;
             }
             else
             {
-                gatherToggle.SetActive(false);
+                gatherButton.interactable = true;
+                stopGatherButton.interactable = false;
             }
+        }
+        else
+        {
+            gatherButton.interactable = false;
+            gatherButton.interactable = false;
         }
     }
 
@@ -78,12 +88,17 @@ public class BuildElementUI : MonoBehaviour {
         GameObject newStockpile = Instantiate(stockPile, new Vector3(0.0f, 0.001f, 0.0f), Quaternion.identity);
         ExecuteEvents.Execute<ICustomMessageTarget>(newStockpile, null, (x, y) => x.PlacingBuilding(mainCamera));
     }
-    public void GatherToggeled()
+    public void GatherPressed()
     {
-        if (currentSelected.tag != "Gather")
-            currentSelected.tag = "Gather";
-        else
-            currentSelected.tag = "Untagged";
+        currentSelected.tag = "Gather";
+        gatherButton.interactable = false;
+        stopGatherButton.interactable = true;
+    }
+    public void StopGatherPressed()
+    {
+        currentSelected.tag = "Untagged";
+        gatherButton.interactable = true;
+        stopGatherButton.interactable = false;
     }
 
     // TODO: fix bug w/ interface when selecting between stockpile and house, sometimes creates stockpile instead
