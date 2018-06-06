@@ -595,7 +595,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1372915017}
         m_MethodName: GatherPressed
         m_Mode: 1
         m_Arguments:
@@ -1483,8 +1483,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: GatherPressed
+      - m_Target: {fileID: 1372915017}
+        m_MethodName: StopGatherPressed
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
