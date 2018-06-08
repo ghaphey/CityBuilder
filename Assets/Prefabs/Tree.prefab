@@ -113,7 +113,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resourceValue: 200
-  workTime: 5
+  workTime: 1
+  resourceType: {fileID: 1014832306337570, guid: 72aa8d0637293e340addf1b37b14b376,
+    type: 2}
 --- !u!136 &136503931884839838
 CapsuleCollider:
   m_ObjectHideFlags: 1

@@ -215,6 +215,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03ed7d8eb71755c4699d3fa217102f7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  workDistance: 1
+  maxInventorySpace: 20
+  pickupAmount: 5
 --- !u!136 &136281863479168324
 CapsuleCollider:
   m_ObjectHideFlags: 1

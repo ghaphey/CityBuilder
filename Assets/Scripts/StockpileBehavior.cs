@@ -12,11 +12,15 @@ public class StockpileBehavior : MonoBehaviour {
     // want to designate 4 slots w/ capacity and keep track of what is here
 	// Use this for initialization
 	void Start () {
-		foreach (StockSlot slot in currStock)
+
+        for( int i = 0; i < 4; i++)
         {
-            slot.number = 0;
-            slot.rTag = null;
-            slot.item = null;
+            currStock[i] = new StockSlot
+            {
+                number = 0,
+                rTag = null,
+                item = null
+            };
         }
 	}
 
@@ -27,14 +31,16 @@ public class StockpileBehavior : MonoBehaviour {
         foreach (StockSlot slot in currStock)
         {
             i++;
-            if (slot.number == 0 && slot.item != null)
+            if (slot.number < 0)
+                slot.number = 0;
+            else if (slot.number == 0 && slot.item != null)
             {
                 Destroy(slot.item);
                 slot.item = null;
             }
             else if (slot.number > 0 && slot.item == null)
             {
-                switch(slot.rTag)
+                switch (slot.rTag)
                 {
                     case "Wood":
                         slot.item = createItemAtSlot(i, wood);
@@ -57,27 +63,28 @@ public class StockpileBehavior : MonoBehaviour {
         switch (index)
         {
             case 0:
-                x = 2.0f;
-                z = 2.0f;
+                x = .25f;
+                z = .25f;
                 break;
             case 1:
-                x = 2.0f;
-                z = -2.0f;
+                x = .25f;
+                z = -.25f;
                 break;
             case 2:
-                x = -2.0f;
-                z = 2.0f;
+                x = -.25f;
+                z = .25f;
                 break;
             case 3:
-                x = -2.0f;
-                z = -2.0f;
+                x = -.25f;
+                z = -.25f;
                 break;
             default:
                 x = 0.0f;
                 z = 0.0f;
                 break;
         }
-        return Instantiate(item, new Vector3(x, 0.2f, z), Quaternion.identity, gameObject.transform);
+        return Instantiate(item, new Vector3(x, 0.15f, z), Quaternion.identity, gameObject.transform);
+        // will have to move it AFTER instantiation
     }
 
     public int DepositItem (string itemTag, int amount)
@@ -150,6 +157,15 @@ public class StockpileBehavior : MonoBehaviour {
         return false;
     }
     
+    public bool SpaceAvailable(string itemType)
+    {
+        foreach (StockSlot slot in currStock)
+        {
+            if ((slot.rTag == null || slot.rTag == itemType) && slot.number < capacity)
+                return true;
+        }
+        return false;
+    }
 
     private class StockSlot
     {

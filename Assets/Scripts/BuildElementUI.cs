@@ -9,6 +9,7 @@ public class BuildElementUI : MonoBehaviour {
     [SerializeField] GameObject house;
     [SerializeField] GameObject stockPile;
     [SerializeField] GameObject selected;
+    [SerializeField] GameObject buildings;
     [SerializeField] Button gatherButton;
     [SerializeField] Button stopGatherButton;
 
@@ -48,44 +49,50 @@ public class BuildElementUI : MonoBehaviour {
         }
         if (Input.GetMouseButtonDown(1))
         {
-            Destroy(currentSelected.transform.Find("Selected(Clone)").gameObject);
-            if (currentSelected.transform.parent.name == "Resources")
-                gatherButton.interactable = false;
-            currentSelected = null;
+            if (currentSelected != null)
+            {
+                Destroy(currentSelected.transform.Find("Selected(Clone)").gameObject);
+                if (currentSelected.transform.parent.name == "Resources")
+                    gatherButton.interactable = false;
+                currentSelected = null;
+            }
         }
     }
 
     private void ContextMenuController()
     {
-        if (currentSelected.transform.parent.name == "Resources")
+        if (currentSelected != null && currentSelected.transform.parent != null)
         {
-            gatherButton.interactable = true;
-            if (currentSelected.tag == "Gather")
+            if (currentSelected.transform.parent.name == "Resources")
             {
-                gatherButton.interactable = false;
-                stopGatherButton.interactable = true;
+                gatherButton.interactable = true;
+                if (currentSelected.tag == "Gather")
+                {
+                    gatherButton.interactable = false;
+                    stopGatherButton.interactable = true;
+                }
+                else
+                {
+                    gatherButton.interactable = true;
+                    stopGatherButton.interactable = false;
+                }
             }
             else
             {
-                gatherButton.interactable = true;
-                stopGatherButton.interactable = false;
+                gatherButton.interactable = false;
+                gatherButton.interactable = false;
             }
-        }
-        else
-        {
-            gatherButton.interactable = false;
-            gatherButton.interactable = false;
         }
     }
 
     public void HousePressed ()
     {
-        GameObject newHouse = Instantiate(house, new Vector3(0.0f, 0.4f, 0.0f), Quaternion.identity);
+        GameObject newHouse = Instantiate(house, new Vector3(0.0f, 0.4f, 0.0f), Quaternion.identity, buildings.transform);
         ExecuteEvents.Execute<ICustomMessageTarget>(newHouse, null, (x, y) => x.PlacingBuilding(mainCamera)); 
     }
     public void StockpilePressed()
     {
-        GameObject newStockpile = Instantiate(stockPile, new Vector3(0.0f, 0.001f, 0.0f), Quaternion.identity);
+        GameObject newStockpile = Instantiate(stockPile, new Vector3(0.0f, 0.001f, 0.0f), Quaternion.identity, buildings.transform);
         ExecuteEvents.Execute<ICustomMessageTarget>(newStockpile, null, (x, y) => x.PlacingBuilding(mainCamera));
     }
     public void GatherPressed()
