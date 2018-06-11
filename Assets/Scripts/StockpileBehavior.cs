@@ -30,7 +30,6 @@ public class StockpileBehavior : MonoBehaviour {
         int i = 0;
         foreach (StockSlot slot in currStock)
         {
-            i++;
             if (slot.number < 0)
                 slot.number = 0;
             else if (slot.number == 0 && slot.item != null)
@@ -54,6 +53,9 @@ public class StockpileBehavior : MonoBehaviour {
 
                 }
             }
+            else
+                slot.item.GetComponentInChildren<TextMesh>().text = slot.number.ToString();
+            i++;
         }
     }
 
@@ -63,27 +65,29 @@ public class StockpileBehavior : MonoBehaviour {
         switch (index)
         {
             case 0:
-                x = .25f;
-                z = .25f;
+                x = 2.5f;
+                z = 2.5f;
                 break;
             case 1:
-                x = .25f;
-                z = -.25f;
+                x = 2.5f;
+                z = -2.5f;
                 break;
             case 2:
-                x = -.25f;
-                z = .25f;
+                x = -2.5f;
+                z = 2.5f;
                 break;
             case 3:
-                x = -.25f;
-                z = -.25f;
+                x = -2.5f;
+                z = -2.5f;
                 break;
             default:
                 x = 0.0f;
                 z = 0.0f;
                 break;
         }
-        return Instantiate(item, new Vector3(x, 0.15f, z), Quaternion.identity, gameObject.transform);
+        GameObject newItem = Instantiate(item, gameObject.transform, false);
+        newItem.transform.localPosition = new Vector3(x, 01.5f, z);
+        return newItem;
         // will have to move it AFTER instantiation
     }
 

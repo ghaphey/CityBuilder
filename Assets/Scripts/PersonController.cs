@@ -94,6 +94,7 @@ public class PersonController : MonoBehaviour
             if (myInventory.num <= 0)
             {
                 goal = null;
+                myInventory.itemType = null;
                 currState = personState.Idle;
             }
             else
@@ -129,8 +130,6 @@ public class PersonController : MonoBehaviour
             agent.destination = goal.transform.position;
             agent.isStopped = false;
         }
-        else
-            print("Nothing to Gather!");
     }
 
     private void WorkerWorkingState()
