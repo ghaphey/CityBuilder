@@ -53,7 +53,7 @@ public class StockpileBehavior : MonoBehaviour {
 
                 }
             }
-            else
+            else if (slot.item != null)
                 slot.item.GetComponentInChildren<TextMesh>().text = slot.number.ToString();
             i++;
         }

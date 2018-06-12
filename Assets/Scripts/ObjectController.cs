@@ -5,7 +5,9 @@ using UnityEngine.EventSystems;
 
 public class ObjectController : MonoBehaviour, ICustomMessageTarget
 {
-    [SerializeField] float objectWidth;
+    [SerializeField] private float objectWidth;
+    [SerializeField] public Texture icon;
+    [SerializeField] public string objectName;
     
     private int invalidPlacement = 0;
     private bool movingObject = false;
@@ -17,6 +19,7 @@ public class ObjectController : MonoBehaviour, ICustomMessageTarget
     void Start()
     {
         widthOffset = objectWidth / 2.0f;
+        name = objectName;
     }
 
     // Update is called once per frame

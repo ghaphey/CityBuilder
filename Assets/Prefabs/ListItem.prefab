@@ -38,6 +38,8 @@ GameObject:
   - component: {fileID: 224468802484293994}
   - component: {fileID: 222202461510458918}
   - component: {fileID: 114951012500487312}
+  - component: {fileID: 114194816317940340}
+  - component: {fileID: 114203615958283680}
   m_Layer: 5
   m_Name: ListItem
   m_TagString: Untagged
@@ -95,6 +97,38 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: House
+--- !u!114 &114194816317940340
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1245444738131758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1679637790, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: 120
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
+--- !u!114 &114203615958283680
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1245444738131758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbf081d53883a694787b44ad3b2c3662, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  icon: {fileID: 0}
+  iconName: 
 --- !u!114 &114775657243706436
 MonoBehaviour:
   m_ObjectHideFlags: 1
