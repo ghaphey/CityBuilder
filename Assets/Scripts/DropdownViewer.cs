@@ -7,20 +7,13 @@ using UnityEngine.UI;
 public class DropdownViewer : MonoBehaviour
 {
     [SerializeField] private GameObject listItemPrefab;
-    [SerializeField] private GameObject ContentPanel;
+    [SerializeField] private GameObject contentPanel;
+   
 
-    // Use this for initialization
-    void Start () {
-        ConstructBuildingsList();
-	}
-
-    // Update is called once per frame
-    void Update() {
-
-    }
 
     public void ChangeViewMode(Text newMode)
     {
+        ClearList();
         switch ( newMode.text )
         {
             case "Buildings":
@@ -29,22 +22,18 @@ public class DropdownViewer : MonoBehaviour
             case "People":
                 ShowPeople();
                 break;
+            case "<none>":
+                gameObject.SetActive(false);
+                break;
             default:
                 gameObject.SetActive(false);
                 break;
         }
     }
-
-    private void ShowPeople()
-    {
-        gameObject.SetActive(true);
-
-    }
-
+   
     private void ShowBuildings()
     {
         gameObject.SetActive(true);
-        ConstructBuildingsList();
         GameObject newItem = null;
 
         GameObject buildings = GameObject.Find("Buildings");
@@ -57,18 +46,49 @@ public class DropdownViewer : MonoBehaviour
             newItem = Instantiate(listItemPrefab);
             ListItemBehavior controller = newItem.GetComponent<ListItemBehavior>();
             controller.icon = child.icon;
-            controller.iconName = child.name;
-            newItem.transform.SetParent( ContentPanel.transform, false);
+            controller.text = child.name;
+            controller.SetObject(buildings.transform.GetChild(i).gameObject, "Building");
+            newItem.transform.SetParent( contentPanel.transform, false);
             newItem.transform.localScale = Vector3.one;
 
         }
        
     }
 
-    private void ConstructBuildingsList ()
+    private void ShowPeople()
     {
-        
+        gameObject.SetActive(true);
+        GameObject newItem = null;
+
+        GameObject people = GameObject.Find("People");
+        print(people.transform.childCount);
+        for (int i = 0; i < people.transform.childCount; i++)
+        {
+            PersonController child = people.transform.GetChild(i).GetComponent<PersonController>();
+            if (child == null)
+                print("oops");
+            newItem = Instantiate(listItemPrefab);
+            ListItemBehavior controller = newItem.GetComponent<ListItemBehavior>();
+            controller.icon = child.icon;
+            controller.text = child.PersonTask() + "\n" + child.PersonState();
+            controller.SetObject(people.transform.GetChild(i).gameObject, "Person");
+            newItem.transform.SetParent(contentPanel.transform, false);
+            newItem.transform.localScale = Vector3.one;
+
+        }
+
     }
+
+    private void ClearList()
+    {
+        if (contentPanel.transform.childCount == 0)
+            return;
+        for (int i = contentPanel.transform.childCount; i > 0; i-- )
+        {
+            Destroy(contentPanel.transform.GetChild(i - 1).gameObject);
+        }
+    }
+   
 
     private void NewListItem (Texture pic, string name)
     {

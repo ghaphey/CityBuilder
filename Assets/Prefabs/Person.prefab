@@ -218,6 +218,7 @@ MonoBehaviour:
   workDistance: 1
   maxInventorySpace: 20
   pickupAmount: 5
+  icon: {fileID: 2800000, guid: f941df9a6c0bd1943be7639b97af10e2, type: 3}
 --- !u!136 &136281863479168324
 CapsuleCollider:
   m_ObjectHideFlags: 1

@@ -9,6 +9,7 @@ public class PersonController : MonoBehaviour
     [SerializeField] private float workDistance = 1.0f;
     [SerializeField] private int maxInventorySpace = 20;
     [SerializeField] private int pickupAmount = 5;
+    [SerializeField] public Texture icon;
 
 
     private enum personState { Idle, MovingItem, Building, Moving, Working };
@@ -38,7 +39,7 @@ public class PersonController : MonoBehaviour
         switch (task)
         {
             case personTask.Worker:
-                workerTask();
+                WorkerTask();
                 break;
             case personTask.Builder:
                 break;
@@ -53,7 +54,17 @@ public class PersonController : MonoBehaviour
   //      }
     }
 
-    private void workerTask()
+    public string PersonState ()
+    {
+        return currState.ToString();
+    }
+
+    public string PersonTask ()
+    {
+        return task.ToString();
+    }
+
+    private void WorkerTask()
     {
         switch(currState)
         {
@@ -98,7 +109,7 @@ public class PersonController : MonoBehaviour
                 currState = personState.Idle;
             }
             else
-                myInventory.num = goal.GetComponent<StockpileBehavior>().DepositItem(myInventory.itemType.name, myInventory.num);
+                myInventory.num = goal.GetComponent<StockpileBehavior>().DepositItem(myInventory.num, myInventory.itemType);
 
             if (myInventory.num > 0)
                 goal = null;

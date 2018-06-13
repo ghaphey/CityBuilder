@@ -23,10 +23,9 @@ GameObject:
   - component: {fileID: 23350537531024344}
   - component: {fileID: 54863168682392642}
   - component: {fileID: 65826612825228408}
-  - component: {fileID: 114484977825061658}
-  - component: {fileID: 114635181418757666}
+  - component: {fileID: 114522979334208212}
   m_Layer: 0
-  m_Name: Stockpile
+  m_Name: StockpileSlot
   m_TagString: Stockpile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39,7 +38,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1704548021732920}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.07, z: 0}
+  m_LocalPosition: {x: 0.5, y: 0.001, z: 0.5}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -114,7 +113,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 9, y: 5, z: 9}
   m_Center: {x: 0, y: 2.5, z: 0}
---- !u!114 &114484977825061658
+--- !u!114 &114522979334208212
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -122,23 +121,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1704548021732920}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89061e54474baf74cb6d83ef6ef2f141, type: 3}
+  m_Script: {fileID: 11500000, guid: 9b48ce72c16949441873d3890037c379, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectWidth: 1
-  icon: {fileID: 2800000, guid: 1234af281b447b641ac7686c80f6ab58, type: 3}
-  objectName: Stockpile
---- !u!114 &114635181418757666
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1704548021732920}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f79d648524896d34faf1cdb485e58583, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  capacity: 100
-  wood: {fileID: 1014832306337570, guid: 72aa8d0637293e340addf1b37b14b376, type: 2}
-  stone: {fileID: 1119639466099180, guid: 42e371a80c0ad4c4daae5bc8e96e0a37, type: 2}
+  capacity: 50
