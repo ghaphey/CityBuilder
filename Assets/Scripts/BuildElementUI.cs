@@ -88,11 +88,13 @@ public class BuildElementUI : MonoBehaviour {
     public void HousePressed ()
     {
         GameObject newHouse = Instantiate(house, new Vector3(0.0f, 0.4f, 0.0f), Quaternion.identity, buildings.transform);
+        newHouse.name = "House";
         ExecuteEvents.Execute<ICustomMessageTarget>(newHouse, null, (x, y) => x.PlacingBuilding(mainCamera)); 
     }
     public void StockpilePressed()
     {
         GameObject newStockpile = Instantiate(stockPile, new Vector3(0.0f, 0.001f, 0.0f), Quaternion.identity, buildings.transform);
+        newStockpile.name = "Stockpile";
         ExecuteEvents.Execute<ICustomMessageTarget>(newStockpile, null, (x, y) => x.PlacingBuilding(mainCamera));
     }
     public void GatherPressed()

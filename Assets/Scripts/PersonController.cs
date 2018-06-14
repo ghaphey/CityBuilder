@@ -196,7 +196,7 @@ public class PersonController : MonoBehaviour
         GameObject[] list = GameObject.FindGameObjectsWithTag(location);
         if (list.Length <= 0)
         {
-            print("No " + location);
+           // print("No " + location);
             return null;
         }
 
@@ -228,7 +228,7 @@ public class PersonController : MonoBehaviour
         ResourceController resource = null;
         if (list.Length <= 0)
         {
-            print("No " + location);
+            //print("No " + location);
             return null;
         }
 

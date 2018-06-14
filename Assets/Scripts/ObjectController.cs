@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -7,9 +8,10 @@ public class ObjectController : MonoBehaviour, ICustomMessageTarget
 {
     [SerializeField] private float objectWidth;
     [SerializeField] public Texture icon;
-    
+
     private int invalidPlacement = 0;
     private bool movingObject = false;
+    private bool sizeStockpile = false;
     private Camera rayCamera;
     private float widthOffset;
 
@@ -44,7 +46,7 @@ public class ObjectController : MonoBehaviour, ICustomMessageTarget
         rayCamera = mainCamera;
     }
 
-    private void MovingBuilding ()
+    private void MovingBuilding()
     {
         RaycastHit hit;
         Ray ray = rayCamera.ScreenPointToRay(Input.mousePosition);
@@ -56,15 +58,22 @@ public class ObjectController : MonoBehaviour, ICustomMessageTarget
         }
 
         if (Input.GetMouseButtonDown(0) && (invalidPlacement <= 0))
-            movingObject = false;
-        else if (Input.GetKeyDown("r"))
+        {
+            if (gameObject.name != "Stockpile")
+                movingObject = false;
+            else
+            {
+                movingObject = false;
+                ExecuteEvents.Execute<JCustomMessageTarget>(gameObject, null, (x, y) => x.SizeStockpile(rayCamera));
+            }
+        }
+        else if (Input.GetKeyDown("r") && gameObject.name != "Stockpile")
         {
             transform.Rotate(0.0f, 90.0f, 0.0f);
         }
         else if (Input.GetMouseButtonDown(1))
             Destroy(gameObject);
     }
-
 }
 
 public interface ICustomMessageTarget : IEventSystemHandler
