@@ -12,6 +12,7 @@ public class BuildElementUI : MonoBehaviour {
     [SerializeField] GameObject buildings;
     [SerializeField] Button gatherButton;
     [SerializeField] Button stopGatherButton;
+    [SerializeField] private Material boundMat;
 
     private Camera mainCamera;
     private GameObject currentSelected = null;
@@ -19,6 +20,16 @@ public class BuildElementUI : MonoBehaviour {
     private void Start()
     {
         mainCamera = (GameObject.Find("Main Camera")).GetComponent<Camera>();
+
+
+
+        GameObject boundingBox = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        boundingBox.transform.SetParent(GameObject.Find("Buildings").transform);
+        boundingBox.transform.localPosition = new Vector3(0.5f, -10.0f, 0.5f);
+        boundingBox.GetComponent<MeshRenderer>().material = boundMat;
+        boundingBox.GetComponent<BoxCollider>().isTrigger = true;
+        boundingBox.name = "BoundingBox";
+        boundingBox.tag = "BoundingBox";
     }
 
     private void Update()
@@ -95,7 +106,7 @@ public class BuildElementUI : MonoBehaviour {
     {
         GameObject newStockpile = Instantiate(stockPile, new Vector3(0.0f, 0.001f, 0.0f), Quaternion.identity, buildings.transform);
         newStockpile.name = "Stockpile";
-        ExecuteEvents.Execute<ICustomMessageTarget>(newStockpile, null, (x, y) => x.PlacingBuilding(mainCamera));
+        ExecuteEvents.Execute<ICustomMessageTarget>(newStockpile, null, (x, y) => x.PlacingDynamic(mainCamera));
     }
     public void GatherPressed()
     {
