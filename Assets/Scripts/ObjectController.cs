@@ -8,6 +8,7 @@ public class ObjectController : MonoBehaviour, ICustomMessageTarget
 {
     [SerializeField] private float objectWidth;
     [SerializeField] public Texture icon;
+    [SerializeField] private float dynamicSizeMax = 1.0f;
 
     private int invalidPlacement = 0;
     private bool movingObject = false;
@@ -15,7 +16,7 @@ public class ObjectController : MonoBehaviour, ICustomMessageTarget
     private bool resizeBox = false;
     private Camera rayCamera;
     private float widthOffset;
-    private GameObject boundingBox = null;
+    //private GameObject boundingBox = null;
 
 
     // Use this for initialization
@@ -51,13 +52,15 @@ public class ObjectController : MonoBehaviour, ICustomMessageTarget
     }
 
     public void PlacingDynamic(Camera mainCamera)
-    {
+    { 
         sizeDynamic = true;
         rayCamera = mainCamera;
+        /*
+        boundingBox = GameObject.FindWithTag("BoundingBox");
         boundingBox.transform.SetParent(gameObject.transform);
         boundingBox.transform.localPosition = new Vector3(0.5f, 0.5f, 0.5f);
-        gameObject.SetActive(false);
         /// finish fixing dynamic placement
+        */
 
     }
 
@@ -83,6 +86,52 @@ public class ObjectController : MonoBehaviour, ICustomMessageTarget
 
     private void SizingDynamicObject()
     {
+        print(invalidPlacement);
+        RaycastHit hit;
+        Ray ray = rayCamera.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit))
+        {
+            if (!resizeBox)
+            {
+                transform.position = new Vector3(Mathf.Round(hit.point.x) + widthOffset, transform.position.y, Mathf.Round(hit.point.z) + widthOffset);
+            }
+            else
+            {
+                // need to figure out how to SHOW that this is being placed
+
+               //float xDiff = hit.point.x - gameObject.transform.position.x;
+                //float zDiff = hit.point.z - gameObject.transform.position.z
+
+                //transform.localScale = new Vector3(Mathf.Clamp(xDiff / 10, -dynamicSizeMax, dynamicSizeMax), 0.1f, 0.1f);
+                //transform.localPosition = new Vector3(xDiff, 0.001f, 0.5f/*Mathf.Round(zDiff) / 2*/);
+            }
+            // yep gotta finish this out
+        }
+        if (Input.GetMouseButtonDown(0) && (invalidPlacement <= 0))
+        {
+            if (!resizeBox)
+                resizeBox = true;
+            else
+                ExecuteEvents.Execute<JCustomMessageTarget>(gameObject, null, (x, y) => x.SizeStockpile(hit.point.x, hit.point.z));
+        }
+        else if (Input.GetMouseButtonDown(1))
+        {
+            Destroy(gameObject);
+            sizeDynamic = false;
+            resizeBox = false;
+            /*
+            boundingBox.transform.localScale = new Vector3(1.0f, 0.5f, 1.0f);
+            boundingBox.transform.localPosition = new Vector3(0.5f, -10.0f, 0.5f); */
+        }
+
+
+
+
+
+
+
+        /*
+        print(invalidPlacement);
         RaycastHit hit;
         Ray ray = rayCamera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hit))
@@ -90,6 +139,7 @@ public class ObjectController : MonoBehaviour, ICustomMessageTarget
             if (!resizeBox)
             {
                 boundingBox.transform.position = new Vector3(Mathf.Round(hit.point.x) + widthOffset, transform.position.y, Mathf.Round(hit.point.z) + widthOffset);
+                transform.position = new Vector3(Mathf.Round(hit.point.x) + widthOffset, transform.position.y, Mathf.Round(hit.point.z) + widthOffset);
             }
             else
             {
@@ -100,7 +150,7 @@ public class ObjectController : MonoBehaviour, ICustomMessageTarget
             }
             // yep gotta finish this out
         }
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && (invalidPlacement <= 0))
         {
             if  (resizeBox == false)
                 resizeBox = true;
@@ -113,8 +163,9 @@ public class ObjectController : MonoBehaviour, ICustomMessageTarget
             sizeDynamic = false;
             resizeBox = false;
             boundingBox.transform.localScale = new Vector3(1.0f, 0.5f, 1.0f);
-            boundingBox.SetActive(false);
+            boundingBox.transform.localPosition = new Vector3(0.5f, -10.0f, 0.5f);
         }
+        */
     }
 }
 

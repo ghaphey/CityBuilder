@@ -7,9 +7,9 @@ using UnityEngine.EventSystems;
 
 public class StockpileBehavior : MonoBehaviour, JCustomMessageTarget
 {
+    [SerializeField] private GameObject StockpileSlot;
 
-    private bool sizingStockpile = false;
-    private Camera RayCamera;
+    private GameObject[,] stockSlots = null;
 
     private void Start()
     {
@@ -17,16 +17,27 @@ public class StockpileBehavior : MonoBehaviour, JCustomMessageTarget
 
     private void Update()
     {
-        if (sizingStockpile)
-            SizingStockpile();
     }
-
-    private void SizingStockpile()
+    
+    public void SizeStockpile(float x, float z)
     {
-    } // must re-implement most due to changes in how placing objects work
+        int n = Mathf.RoundToInt(Mathf.Abs(x));
+        int m = Mathf.RoundToInt(Mathf.Abs(z));
+        stockSlots = new GameObject[n,m];
+        
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                stockSlots[i, j] = Instantiate(StockpileSlot, transform, false);
+                if (x > 0 && z > 0)
+                    stockSlots[i, j].transform.localPosition = new Vector3(i + 0.5f, 0.001f, j + 0.5f);
+                else if (x > 0 && z < 0)
+                    stockSlots[i, j].transform.localPosition = new Vector3(i + 0.5f, 0.001f, -j - 0.5f);
+                /// continue this,
+            }
+        }
 
-    public void SizeStockpile(Camera rayCamera)
-    {
     }
 
 
@@ -48,6 +59,6 @@ public class StockpileBehavior : MonoBehaviour, JCustomMessageTarget
 
 public interface JCustomMessageTarget : IEventSystemHandler
 {
-    void SizeStockpile(Camera rayCamera);
+    void SizeStockpile(float x, float z);
 
 }

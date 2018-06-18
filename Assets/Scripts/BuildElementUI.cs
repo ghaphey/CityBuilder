@@ -23,13 +23,15 @@ public class BuildElementUI : MonoBehaviour {
 
 
 
-        GameObject boundingBox = GameObject.CreatePrimitive(PrimitiveType.Cube);
+       /* GameObject boundingBox = GameObject.CreatePrimitive(PrimitiveType.Cube);
         boundingBox.transform.SetParent(GameObject.Find("Buildings").transform);
         boundingBox.transform.localPosition = new Vector3(0.5f, -10.0f, 0.5f);
         boundingBox.GetComponent<MeshRenderer>().material = boundMat;
         boundingBox.GetComponent<BoxCollider>().isTrigger = true;
+        Rigidbody rb = boundingBox.AddComponent<Rigidbody>();
+        rb.isKinematic = true;
         boundingBox.name = "BoundingBox";
-        boundingBox.tag = "BoundingBox";
+        boundingBox.tag = "BoundingBox";*/
     }
 
     private void Update()
@@ -103,7 +105,7 @@ public class BuildElementUI : MonoBehaviour {
         ExecuteEvents.Execute<ICustomMessageTarget>(newHouse, null, (x, y) => x.PlacingBuilding(mainCamera)); 
     }
     public void StockpilePressed()
-    {
+    {  
         GameObject newStockpile = Instantiate(stockPile, new Vector3(0.0f, 0.001f, 0.0f), Quaternion.identity, buildings.transform);
         newStockpile.name = "Stockpile";
         ExecuteEvents.Execute<ICustomMessageTarget>(newStockpile, null, (x, y) => x.PlacingDynamic(mainCamera));
