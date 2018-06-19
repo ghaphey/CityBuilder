@@ -108,6 +108,7 @@ public class BuildElementUI : MonoBehaviour {
     {  
         GameObject newStockpile = Instantiate(stockPile, new Vector3(0.0f, 0.001f, 0.0f), Quaternion.identity, buildings.transform);
         newStockpile.name = "Stockpile";
+        newStockpile.transform.Rotate(new Vector3(90.0f, 0, 0));
         ExecuteEvents.Execute<ICustomMessageTarget>(newStockpile, null, (x, y) => x.PlacingDynamic(mainCamera));
     }
     public void GatherPressed()

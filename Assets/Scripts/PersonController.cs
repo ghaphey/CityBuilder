@@ -30,12 +30,13 @@ public class PersonController : MonoBehaviour
         agent.stoppingDistance = 1.0f;
 
         task = personTask.Worker;
-        myInventory = new Inventory();
+        myInventory = new Inventory { num = 0, itemType = null } ;
     }
 
     // Update is called once per frame
     void Update()
     {
+        gameObject.GetComponentInChildren<TextMesh>().text = myInventory.num.ToString();
         switch (task)
         {
             case personTask.Worker:
@@ -266,7 +267,7 @@ public class PersonController : MonoBehaviour
         {
             stock = list[i].GetComponent<StockpileBehavior>();
             curDistance = Vector3.Distance(transform.position, list[i].transform.position);
-            if (curDistance < distance && stock.SpaceAvailable(itemType))
+            if (curDistance < distance && stock.DepositSpace(itemType))
             {
                 // MUST DO SOMETHING HERE TO MAKE IT HAPPEN
                 distance = curDistance;

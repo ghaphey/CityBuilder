@@ -86,7 +86,6 @@ public class ObjectController : MonoBehaviour, ICustomMessageTarget
 
     private void SizingDynamicObject()
     {
-        print(invalidPlacement);
         RaycastHit hit;
         Ray ray = rayCamera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hit))
@@ -99,36 +98,35 @@ public class ObjectController : MonoBehaviour, ICustomMessageTarget
             {
                 // need to figure out how to SHOW that this is being placed
 
-               //float xDiff = hit.point.x - gameObject.transform.position.x;
+                //float xDiff = hit.point.x - gameObject.transform.position.x;
                 //float zDiff = hit.point.z - gameObject.transform.position.z
 
                 //transform.localScale = new Vector3(Mathf.Clamp(xDiff / 10, -dynamicSizeMax, dynamicSizeMax), 0.1f, 0.1f);
                 //transform.localPosition = new Vector3(xDiff, 0.001f, 0.5f/*Mathf.Round(zDiff) / 2*/);
             }
             // yep gotta finish this out
+
+            if (Input.GetMouseButtonDown(0) && (invalidPlacement <= 0))
+            {
+                if (!resizeBox)
+                    resizeBox = true;
+                else
+                {
+                    ExecuteEvents.Execute<JCustomMessageTarget>(gameObject, null, (x, y) => x.SizeStockpile(transform.InverseTransformPoint(hit.point)));
+                    resizeBox = false;
+                    sizeDynamic = false;
+                }
+            }
+            else if (Input.GetMouseButtonDown(1))
+            {
+                Destroy(gameObject);
+                sizeDynamic = false;
+                resizeBox = false;
+                /*
+                boundingBox.transform.localScale = new Vector3(1.0f, 0.5f, 1.0f);
+                boundingBox.transform.localPosition = new Vector3(0.5f, -10.0f, 0.5f); */
+            }
         }
-        if (Input.GetMouseButtonDown(0) && (invalidPlacement <= 0))
-        {
-            if (!resizeBox)
-                resizeBox = true;
-            else
-                ExecuteEvents.Execute<JCustomMessageTarget>(gameObject, null, (x, y) => x.SizeStockpile(hit.point.x, hit.point.z));
-        }
-        else if (Input.GetMouseButtonDown(1))
-        {
-            Destroy(gameObject);
-            sizeDynamic = false;
-            resizeBox = false;
-            /*
-            boundingBox.transform.localScale = new Vector3(1.0f, 0.5f, 1.0f);
-            boundingBox.transform.localPosition = new Vector3(0.5f, -10.0f, 0.5f); */
-        }
-
-
-
-
-
-
 
         /*
         print(invalidPlacement);

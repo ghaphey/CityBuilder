@@ -6,46 +6,43 @@ public class StockpileSlotBehavior : MonoBehaviour
 {
     [SerializeField] private int capacity = 50;
 
-    private Stock currItem;
-    void Start()
+    private class Stock
     {
-        //initialize
-        currItem = new Stock
-        {
-            number = 0,
-            rTag = null,
-            item = null
-        };
+        public string rTag;
+        public int number;
+        public GameObject item;
     }
 
-    // Update is called once per frame
-    private void Update()
+    private Stock currItem;
+
+    private void Start()
     {
-        // just in case, < 0 reset stock
-        if (currItem.number < 0)
+        currItem = new Stock { rTag = null, number = 0, item = null };
+    }
+
+    public void UpdateItem()
+    {
+        if (currItem.number <= 0)
         {
             currItem.number = 0;
             currItem.rTag = null;
-        }
-        // if the number is zero, and the item still exists, reset the stock
-        else if (currItem.number == 0 && currItem.item != null)
-        {
-            Destroy(currItem.item);
+            if (currItem.item != null)
+                Destroy(currItem.item);
             currItem.item = null;
-            currItem.rTag = null;
         }
-        // if the item exists and the number is > 0 we will update the text
-        else if (currItem.item != null)
+        else
             currItem.item.GetComponentInChildren<TextMesh>().text = currItem.number.ToString();
     }
 
-    // create passed item centered in the stockpile
-    private void CreateItem(GameObject item)
+
+
+    public void CreateItem(GameObject item)
     {
+        print(currItem.number);
         currItem.item = item;
         currItem.rTag = item.name;
         GameObject newItem = Instantiate(item, gameObject.transform, false);
-        newItem.transform.localPosition = new Vector3(0.0f, 01.5f, 0.0f);
+        currItem.item.GetComponentInChildren<TextMesh>().text = currItem.number.ToString();
     }
 
     // simple check for stockpilebehavior to call
@@ -57,14 +54,20 @@ public class StockpileSlotBehavior : MonoBehaviour
             return false;
     }
 
+    public bool CapacityLeft()
+    {
+        if (currItem.number != capacity)
+            return true;
+        else
+            return false;
+    }
+
     // deposit item, MUST CHECK IF ITEM MATCHES FIRST, diff function
     // returns the number of remaining items unsuccessfully deposited
-    public int DepositItem(int amount, GameObject newItem)
+    public int DepositItem(int amount)
     {
         // if an item doesn't currently exist, create it
         // should check for matching items before calling this function
-        if (currItem.item == null)
-            CreateItem(newItem);
         int numLeft = amount;
         // if we are already over capacity, return
         if (currItem.number >= capacity)
@@ -106,10 +109,4 @@ public class StockpileSlotBehavior : MonoBehaviour
         }
     }
 
-    private class Stock
-    {
-        public string rTag;
-        public int number;
-        public GameObject item;
-    }
 }
