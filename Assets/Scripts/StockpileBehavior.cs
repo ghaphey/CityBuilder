@@ -20,8 +20,8 @@ public class StockpileBehavior : MonoBehaviour, JCustomMessageTarget
         float y = point.y;
         print("X: " + x);
         print("Y: " + y);
-        int n = Mathf.RoundToInt(Mathf.Abs(x));
-        int m = Mathf.RoundToInt(Mathf.Abs(y));
+        int n = Mathf.CeilToInt(Mathf.Abs(x));
+        int m = Mathf.CeilToInt(Mathf.Abs(y));
         slotObject = new GameObject[n,m];
         slots = new StockpileSlotBehavior[n, m];
         
@@ -31,6 +31,7 @@ public class StockpileBehavior : MonoBehaviour, JCustomMessageTarget
             {
                 slotObject[i, j] = Instantiate(StockpileSlot, transform, false);
                 slots[i, j] = slotObject[i, j].GetComponent<StockpileSlotBehavior>();
+                slots[i, j].InitStock();
                 if (x >= 0 && y >= 0)
                     slotObject[i, j].transform.localPosition = new Vector3(i, j, zOffset);
                 else if (x >= 0 && y < 0)
@@ -68,7 +69,6 @@ public class StockpileBehavior : MonoBehaviour, JCustomMessageTarget
             {
                 amount = s.DepositItem(amount);
                 s.CreateItem(item);
-                s.UpdateItem();
             }
             if (amount == 0)
                 return 0;

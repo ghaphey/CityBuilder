@@ -8,6 +8,8 @@ public class ResourceController : MonoBehaviour
     [SerializeField] private float workTime = 5.0f;
     [SerializeField] private GameObject resourceType;
 
+    private string name = null;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -36,5 +38,15 @@ public class ResourceController : MonoBehaviour
     public float GetWorkTime()
     {
         return workTime;
+    }
+
+    public void SetOwner(string newName)
+    {
+        name = newName;
+    }
+
+    public string CurrentOwner()
+    {
+        return name;
     }
 }

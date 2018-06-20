@@ -91,14 +91,18 @@ public class PersonController : MonoBehaviour
     {
         if (goal == null)
         {
-            goal = FindClosestStockpile(myInventory.itemType.name);
+            goal = FindClosestStockpile(myInventory.itemType);
             if (goal != null)
             {
                 agent.destination = goal.transform.position;
                 agent.isStopped = false;
             }
             else
+            {
                 print("no stockpiles");
+                goal = null;
+                currState = personState.Idle;
+            }
         }
         else if (agent.remainingDistance <= workDistance)
         {
@@ -114,6 +118,8 @@ public class PersonController : MonoBehaviour
 
             if (myInventory.num > 0)
                 goal = null;
+            else
+                myInventory.itemType = null;
         }
         
     }
@@ -135,7 +141,7 @@ public class PersonController : MonoBehaviour
 
     private void WorkerIdleState()
     {
-        goal = FindClosestLocation("Gather");
+        goal = FindClosestResource("Gather", null);
         if (goal != null)
         {
             currState = personState.Moving;
@@ -146,31 +152,32 @@ public class PersonController : MonoBehaviour
 
     private void WorkerWorkingState()
     {
-        ResourceController resource = goal.GetComponent<ResourceController>();
+        ResourceController resource = null;
+        if (goal != null)
+            resource = goal.GetComponent<ResourceController>();
+
         if (resource == null)
+        {
             print("can't gather not a resource");
+            goal = FindClosestResource("Gather", myInventory.itemType);
+            currState = personState.Moving;
+            if (goal == null)
+                currState = personState.MovingItem;
+            else
+            {
+                agent.destination = goal.transform.position;
+            }
+        }
         else
         {
-            if (goal == null && myInventory.num < maxInventorySpace)
-            {
-                goal = FindClosestLocation("Gather", myInventory.itemType.name);
-                currState = personState.Moving;
-                if (goal == null)
-                    currState = personState.MovingItem;
-                else
-                {
-                    agent.destination = goal.transform.position;
-                    goal = null;
-                }
-            }
-            else if (myInventory.num == maxInventorySpace)
+
+            if (myInventory.num == maxInventorySpace)
             {
                 goal = null;
+                resource.SetOwner(null);
                 currState = personState.MovingItem;
             }
-            else if (myInventory.num > maxInventorySpace)
-                print("should not have more than max");
-            else
+            else if (resource.CurrentOwner() == gameObject.name)
             {
                 timeWorked += (resource.GetWorkTime() * Time.deltaTime);
                 if (timeWorked >= resource.GetWorkTime())
@@ -181,6 +188,26 @@ public class PersonController : MonoBehaviour
                     timeWorked = 0.0f;
                 }
             }
+            else if (resource.CurrentOwner() == null)
+                resource.SetOwner(gameObject.name);
+            else if ((goal == null || resource.CurrentOwner() != gameObject.name) && myInventory.num < maxInventorySpace)
+            {
+                goal = FindClosestResource("Gather", myInventory.itemType);
+                currState = personState.Moving;
+                if (goal == null)
+                    currState = personState.MovingItem;
+                else
+                {
+                    agent.destination = goal.transform.position;
+                }
+            }
+            else
+            {
+                currState = personState.Idle;
+                goal = null;
+                print("something dun messed up");
+            }
+
         }
         
     }
@@ -220,7 +247,7 @@ public class PersonController : MonoBehaviour
     /// Finds the closest location via the "FindGameObjectsWithTag" function
     /// location string must match a tag within unity for function to work
     /// and must also match the desired resource type
-    GameObject FindClosestLocation(string location, string resourceType)
+    GameObject FindClosestResource(string location, GameObject resourceType)
     {
         float distance = Mathf.Infinity;
         float curDistance = 0.0f;
@@ -239,7 +266,7 @@ public class PersonController : MonoBehaviour
         {
             resource = list[i].GetComponent<ResourceController>();
             curDistance = Vector3.Distance(transform.position, list[i].transform.position);
-            if (curDistance < distance && resource.GetResourceType().name == resourceType)
+            if (curDistance < distance && (resourceType == null || resource.GetResourceType().name == resourceType.name ) && resource.CurrentOwner() == null )
             {
                 // MUST DO SOMETHING HERE TO MAKE IT HAPPEN
                 distance = curDistance;
@@ -249,14 +276,14 @@ public class PersonController : MonoBehaviour
         return closest;
     }
 
-    GameObject FindClosestStockpile(string itemType)
+    GameObject FindClosestStockpile(GameObject itemType)
     {
         float distance = Mathf.Infinity;
         float curDistance = 0.0f;
         GameObject closest = null;
         GameObject[] list = GameObject.FindGameObjectsWithTag("Stockpile");
         StockpileBehavior stock = null;
-        if (list.Length <= 0)
+        if (list.Length <= 0 || itemType == null)
         {
             return null;
         }
@@ -267,7 +294,7 @@ public class PersonController : MonoBehaviour
         {
             stock = list[i].GetComponent<StockpileBehavior>();
             curDistance = Vector3.Distance(transform.position, list[i].transform.position);
-            if (curDistance < distance && stock.DepositSpace(itemType))
+            if (curDistance < distance && stock.DepositSpace(itemType.name))
             {
                 // MUST DO SOMETHING HERE TO MAKE IT HAPPEN
                 distance = curDistance;

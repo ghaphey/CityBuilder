@@ -17,6 +17,11 @@ public class StockpileSlotBehavior : MonoBehaviour
 
     private void Start()
     {
+        
+    }
+
+    public void InitStock()
+    {
         currItem = new Stock { rTag = null, number = 0, item = null };
     }
 
@@ -39,9 +44,8 @@ public class StockpileSlotBehavior : MonoBehaviour
     public void CreateItem(GameObject item)
     {
         print(currItem.number);
-        currItem.item = item;
         currItem.rTag = item.name;
-        GameObject newItem = Instantiate(item, gameObject.transform, false);
+        currItem.item = Instantiate(item, gameObject.transform, false);
         currItem.item.GetComponentInChildren<TextMesh>().text = currItem.number.ToString();
     }
 
@@ -79,7 +83,7 @@ public class StockpileSlotBehavior : MonoBehaviour
             if (currItem.number > capacity)
             {
                 // if we are over capacity, adjust numleft + current item number then return numleft
-                numLeft = capacity - currItem.number;
+                numLeft = currItem.number - capacity;
                 currItem.number -= numLeft;
                 return numLeft;
             }
