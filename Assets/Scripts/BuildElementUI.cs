@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System;
 
 public class BuildElementUI : MonoBehaviour {
 
@@ -12,10 +13,13 @@ public class BuildElementUI : MonoBehaviour {
     [SerializeField] GameObject buildings;
     [SerializeField] Button gatherButton;
     [SerializeField] Button stopGatherButton;
-    [SerializeField] private Material boundMat;
+    [SerializeField] private Texture boxTexture;
 
     private Camera mainCamera;
     private GameObject currentSelected = null;
+    private bool clicked = false;
+    private Vector2 firstClick = Vector2.zero;
+    private Vector2 currPos = Vector2.zero;
 
     private void Start()
     {
@@ -39,10 +43,18 @@ public class BuildElementUI : MonoBehaviour {
         MouseHandler();
     }
 
+
     private void MouseHandler()
     {
         if ( Input.GetMouseButtonDown(0))
         {
+            if (clicked == false)
+            {
+                clicked = true;
+                firstClick = GUIUtility.GUIToScreenPoint(Input.mousePosition);
+            }
+            print(firstClick.x);
+            print(firstClick.y);
             RaycastHit hit;
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
             // this function generates a particlesystem halo to denote whether an object is selected or not
@@ -70,7 +82,28 @@ public class BuildElementUI : MonoBehaviour {
                 currentSelected = null;
             }
         }
+        if (Input.GetMouseButtonUp(0))
+        {
+            clicked = false;
+        }
     }
+
+
+    private void OnGUI()
+    {
+        if (clicked)
+        {
+            currPos =GUIUtility.GUIToScreenPoint(Input.mousePosition);
+            float width = currPos.x - firstClick.x;
+            float height = firstClick.y + currPos.y;
+
+            GUI.color = Color.blue;
+            Rect drawRect = new Rect(firstClick.x, firstClick.y, width, height);
+            GUI.DrawTexture(drawRect, boxTexture, ScaleMode.StretchToFill);
+        }
+       
+    }
+    
 
     private void ContextMenuController()
     {
@@ -123,6 +156,7 @@ public class BuildElementUI : MonoBehaviour {
         gatherButton.interactable = true;
         stopGatherButton.interactable = false;
     }
+    
 
     // TODO: fix bug w/ interface when selecting between stockpile and house, sometimes creates stockpile instead
     // when house clicked

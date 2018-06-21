@@ -2393,7 +2393,7 @@ MonoBehaviour:
   buildings: {fileID: 1428905075}
   gatherButton: {fileID: 439370086}
   stopGatherButton: {fileID: 1745920275}
-  boundMat: {fileID: 2100000, guid: e16d2599662af494fb14707889b3406f, type: 2}
+  boxTexture: {fileID: 2800000, guid: 1234af281b447b641ac7686c80f6ab58, type: 3}
 --- !u!1 &1414777517
 GameObject:
   m_ObjectHideFlags: 0
