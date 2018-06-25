@@ -9,6 +9,7 @@ public class PersonController : MonoBehaviour
     [SerializeField] private float workDistance = 1.0f;
     [SerializeField] private int maxInventorySpace = 20;
     [SerializeField] private int pickupAmount = 5;
+    [SerializeField] private personTask assignedTask;
     [SerializeField] public Texture icon;
 
 
@@ -24,6 +25,7 @@ public class PersonController : MonoBehaviour
     private float timeWorked = 0;
     private Inventory myInventory;
 
+
     // Use this for initialization
     void Start () {
         agent = GetComponent<NavMeshAgent>();
@@ -32,6 +34,7 @@ public class PersonController : MonoBehaviour
         task = personTask.Worker;
         myInventory = new Inventory { num = 0, itemType = null } ;
     }
+    
 
     // Update is called once per frame
     void Update()
@@ -43,6 +46,7 @@ public class PersonController : MonoBehaviour
                 WorkerTask();
                 break;
             case personTask.Builder:
+                // MUST IMPLEMENT
                 break;
             case personTask.Unassigned:
                 break;

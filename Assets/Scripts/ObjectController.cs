@@ -8,7 +8,8 @@ public class ObjectController : MonoBehaviour, ICustomMessageTarget
 {
     [SerializeField] private float objectWidth;
     [SerializeField] public Texture icon;
-    [SerializeField] private float dynamicSizeMax = 1.0f;
+    [SerializeField] private int woodReq = 30;
+    [SerializeField] private int stoneReq = 30;
 
     private int invalidPlacement = 0;
     private bool movingObject = false;
@@ -16,6 +17,8 @@ public class ObjectController : MonoBehaviour, ICustomMessageTarget
     private bool resizeBox = false;
     private Camera rayCamera;
     private float widthOffset;
+
+    private bool finished = false;
     //private GameObject boundingBox = null;
 
 
@@ -32,6 +35,54 @@ public class ObjectController : MonoBehaviour, ICustomMessageTarget
             MovingBuilding();
         else if (sizeDynamic)
             SizingDynamicObject();
+        else if (!finished && tag != "Stockpile")
+            Construction();
+    }
+
+    private void Construction()
+    {
+        if (woodReq <= 0 && stoneReq <= 0)
+        {
+            finished = true;
+            GetComponent<Animator>().SetBool("finished", true);
+        }
+    }
+
+    public int DepositResource(string type, int amount)
+    {
+        if (type == "Wood")
+        {
+            woodReq -= amount;
+            if (woodReq < 0)
+            {
+                return -woodReq;
+            }
+        }
+        else
+        {
+            stoneReq -= amount;
+            if (stoneReq < 0)
+            {
+                return -stoneReq;
+            }
+        }
+        return 0;
+    }
+
+    public bool NeedWood()
+    {
+        if (woodReq > 0)
+            return true;
+        else
+            return false;
+    }
+
+    public bool NeedStone()
+    {
+        if (stoneReq > 0)
+            return true;
+        else
+            return false;
     }
 
 
@@ -55,12 +106,7 @@ public class ObjectController : MonoBehaviour, ICustomMessageTarget
     { 
         sizeDynamic = true;
         rayCamera = mainCamera;
-        /*
-        boundingBox = GameObject.FindWithTag("BoundingBox");
-        boundingBox.transform.SetParent(gameObject.transform);
-        boundingBox.transform.localPosition = new Vector3(0.5f, 0.5f, 0.5f);
-        /// finish fixing dynamic placement
-        */
+        
 
     }
 
@@ -96,15 +142,9 @@ public class ObjectController : MonoBehaviour, ICustomMessageTarget
             }
             else
             {
-                // need to figure out how to SHOW that this is being placed
+                // yep gotta finish this out
 
-                //float xDiff = hit.point.x - gameObject.transform.position.x;
-                //float zDiff = hit.point.z - gameObject.transform.position.z
-
-                //transform.localScale = new Vector3(Mathf.Clamp(xDiff / 10, -dynamicSizeMax, dynamicSizeMax), 0.1f, 0.1f);
-                //transform.localPosition = new Vector3(xDiff, 0.001f, 0.5f/*Mathf.Round(zDiff) / 2*/);
             }
-            // yep gotta finish this out
 
             if (Input.GetMouseButtonDown(0) && (invalidPlacement <= 0))
             {
@@ -122,48 +162,8 @@ public class ObjectController : MonoBehaviour, ICustomMessageTarget
                 Destroy(gameObject);
                 sizeDynamic = false;
                 resizeBox = false;
-                /*
-                boundingBox.transform.localScale = new Vector3(1.0f, 0.5f, 1.0f);
-                boundingBox.transform.localPosition = new Vector3(0.5f, -10.0f, 0.5f); */
             }
         }
-
-        /*
-        print(invalidPlacement);
-        RaycastHit hit;
-        Ray ray = rayCamera.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit))
-        {
-            if (!resizeBox)
-            {
-                boundingBox.transform.position = new Vector3(Mathf.Round(hit.point.x) + widthOffset, transform.position.y, Mathf.Round(hit.point.z) + widthOffset);
-                transform.position = new Vector3(Mathf.Round(hit.point.x) + widthOffset, transform.position.y, Mathf.Round(hit.point.z) + widthOffset);
-            }
-            else
-            {
-                float xDiff = hit.point.x - gameObject.transform.position.x;
-                float zDiff = hit.point.z - gameObject.transform.position.z;
-                boundingBox.transform.localScale = new Vector3(Mathf.Round(xDiff), 0.5f, Mathf.Round(zDiff));
-                boundingBox.transform.localPosition = new Vector3(Mathf.Round(xDiff) / 2, 0.5f, Mathf.Round(zDiff) / 2);
-            }
-            // yep gotta finish this out
-        }
-        if (Input.GetMouseButtonDown(0) && (invalidPlacement <= 0))
-        {
-            if  (resizeBox == false)
-                resizeBox = true;
-            else
-                ExecuteEvents.Execute<JCustomMessageTarget>(gameObject, null, (x, y) => x.SizeStockpile(rayCamera));
-        }
-        else if (Input.GetMouseButtonDown(1))
-        {
-            Destroy(gameObject);
-            sizeDynamic = false;
-            resizeBox = false;
-            boundingBox.transform.localScale = new Vector3(1.0f, 0.5f, 1.0f);
-            boundingBox.transform.localPosition = new Vector3(0.5f, -10.0f, 0.5f);
-        }
-        */
     }
 }
 

@@ -18,8 +18,6 @@ public class StockpileBehavior : MonoBehaviour, JCustomMessageTarget
     {
         float x = point.x;
         float y = point.y;
-        print("X: " + x);
-        print("Y: " + y);
         int n = Mathf.CeilToInt(Mathf.Abs(x));
         int m = Mathf.CeilToInt(Mathf.Abs(y));
         slotObject = new GameObject[n,m];

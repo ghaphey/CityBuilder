@@ -7,12 +7,12 @@ using System;
 
 public class BuildElementUI : MonoBehaviour {
 
-    [SerializeField] GameObject house;
-    [SerializeField] GameObject stockPile;
-    [SerializeField] GameObject selected;
-    [SerializeField] GameObject buildings;
-    [SerializeField] Button gatherButton;
-    [SerializeField] Button stopGatherButton;
+    [SerializeField] private GameObject house;
+    [SerializeField] private GameObject stockPile;
+    [SerializeField] private GameObject selected;
+    [SerializeField] private GameObject buildings;
+    [SerializeField] private Button gatherButton;
+    [SerializeField] private Button stopGatherButton;
     [SerializeField] private Texture boxTexture;
 
     private Camera mainCamera;
@@ -52,9 +52,8 @@ public class BuildElementUI : MonoBehaviour {
             {
                 clicked = true;
                 firstClick = GUIUtility.GUIToScreenPoint(Input.mousePosition);
+                firstClick.y = Screen.height - firstClick.y;
             }
-            print(firstClick.x);
-            print(firstClick.y);
             RaycastHit hit;
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
             // this function generates a particlesystem halo to denote whether an object is selected or not
@@ -94,10 +93,11 @@ public class BuildElementUI : MonoBehaviour {
         if (clicked)
         {
             currPos =GUIUtility.GUIToScreenPoint(Input.mousePosition);
+            currPos.y = Screen.height - currPos.y;
             float width = currPos.x - firstClick.x;
-            float height = firstClick.y + currPos.y;
+            float height = currPos.y - firstClick.y;
 
-            GUI.color = Color.blue;
+            GUI.color = new Color(0,0,1,0.5f);
             Rect drawRect = new Rect(firstClick.x, firstClick.y, width, height);
             GUI.DrawTexture(drawRect, boxTexture, ScaleMode.StretchToFill);
         }

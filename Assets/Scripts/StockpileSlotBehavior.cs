@@ -43,7 +43,6 @@ public class StockpileSlotBehavior : MonoBehaviour
 
     public void CreateItem(GameObject item)
     {
-        print(currItem.number);
         currItem.rTag = item.name;
         currItem.item = Instantiate(item, gameObject.transform, false);
         currItem.item.GetComponentInChildren<TextMesh>().text = currItem.number.ToString();
