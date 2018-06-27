@@ -31,7 +31,7 @@ public class PersonController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         agent.stoppingDistance = 1.0f;
 
-        task = personTask.Worker;
+        task = assignedTask;
         myInventory = new Inventory { num = 0, itemType = null } ;
     }
     
@@ -46,7 +46,7 @@ public class PersonController : MonoBehaviour
                 WorkerTask();
                 break;
             case personTask.Builder:
-                // MUST IMPLEMENT
+                BuilderTask();
                 break;
             case personTask.Unassigned:
                 break;
@@ -58,6 +58,7 @@ public class PersonController : MonoBehaviour
  //           agent.destination = goal.transform.position;
   //      }
     }
+
 
     public string PersonState ()
     {
@@ -216,6 +217,108 @@ public class PersonController : MonoBehaviour
         
     }
 
+    private void BuilderTask()
+    {
+        switch (currState)
+        {
+            case personState.Idle:
+                BuilderIdleState();
+                break;
+            case personState.Moving:
+                BuilderMovingState();
+                break;
+            case personState.Working:
+               // not implemented
+                break;
+            case personState.MovingItem:
+                BuilderMovingItemState();
+                break;
+            case personState.Building:
+                BuilderBuildingState();
+                break;
+        }
+        
+    }
+
+    private void BuilderBuildingState()
+    {
+        ObjectController ObjCont = null;
+        if (goal != null)
+        {
+            ObjCont = goal.GetComponent<ObjectController>();
+        }
+        if (myInventory.num <= 0 && ObjCont.NeedStone())
+        {
+            currState = personState.MovingItem;
+            goal = null;
+            // need to figure out how to request and retreive various stuff
+        }
+    }
+
+    private void BuilderIdleState()
+    {
+        goal = FindUnfinishedBuilding();
+        if (goal != null)
+        {
+            currState = personState.Moving;
+            agent.destination = goal.transform.position;
+            agent.isStopped = false;
+        }
+    }
+
+    private void BuilderMovingState()
+    {
+        if (goal == null)
+        {
+            agent.isStopped = true;
+            currState = personState.Idle;
+        }
+        else if (agent.remainingDistance <= workDistance)
+        {
+            currState = personState.Building;
+        }
+        else if (agent.isStopped == true)
+            agent.isStopped = false;
+    }
+
+    private void BuilderMovingItemState()
+    {
+        if (goal == null)
+        {
+            goal = FindClosestLocation("Stockpile");
+            if (goal != null)
+            {
+                agent.destination = goal.transform.position;
+                agent.isStopped = false;
+            }
+            else
+            {
+                print("no stockpiles");
+                goal = null;
+                currState = personState.Idle;
+            }
+        }
+        else if (agent.remainingDistance <= workDistance)
+        {
+            agent.isStopped = true;
+            if (myInventory.num <= 0)
+            {
+                goal = null;
+                myInventory.itemType = null;
+                currState = personState.Idle;
+            }
+            else
+                myInventory.num = goal.GetComponent<StockpileBehavior>().TakeItem(myInventory.num, myInventory.itemType.name);
+            // this ain't gonna work, need to link to which resource is ID'd by building state
+            if (myInventory.num > 0)
+            {
+                currState = personState.Idle;
+            }
+            else
+                goal = null;
+        }
+    }
+
     /// FindClosestLocation
     ///
     /// Finds the closest location via the "FindGameObjectsWithTag" function
@@ -307,6 +410,35 @@ public class PersonController : MonoBehaviour
         }
         return closest;
     }
+    GameObject FindUnfinishedBuilding()
+    {
+        float distance = Mathf.Infinity;
+        float curDistance = 0.0f;
+        GameObject closest = null;
+        GameObject buildings = GameObject.Find("Buildings");
+        ObjectController bCont = null;
+        if (buildings.transform.childCount <= 0)
+        {
+            //print("No " + location);
+            return null;
+        }
+
+
+        // NEED TO COMPARE DISTANCE "Vector3.Distance" and determine closest stockpile
+        for (int i = 0; i < buildings.transform.childCount; i++)
+        {
+            bCont = buildings.transform.GetChild(i).GetComponent<ObjectController>();
+            curDistance = Vector3.Distance(transform.position, buildings.transform.GetChild(i).position);
+            if (curDistance < distance && (bCont.NeedStone() || bCont.NeedWood()))
+            {
+                // MUST DO SOMETHING HERE TO MAKE IT HAPPEN
+                distance = curDistance;
+                closest = buildings.transform.GetChild(i).gameObject;
+            }
+        }
+        return closest;
+    }
+
 
     private class Inventory
     {
